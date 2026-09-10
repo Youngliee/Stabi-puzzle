@@ -9,7 +9,8 @@ Community-made, unofficial puzzle game inspired by Stabilizer.
 - Horizontal blocks represent **Slippage**
 - Vertical blocks represent **MEV**
 - Move targets award up to 3 stars per level
-- Undo, restart, level select, and one-move hint system
+- Indonesian gameplay UI with undo, restart, and level select
+- Up to 3 one-move hints per level
 - Progress and best moves are saved locally in the browser
 
 ## Run locally
