@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#021b19">
+<title>Stabi Escape — Playtest</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+<section class="landing" id="landing">
+  <div class="card hero-card">
+    <div class="topbrand">COMMUNITY-MADE • UNOFFICIAL</div>
+    <h1>STABI <span>ESCAPE</span></h1>
+    <h2>ESCAPE THE STABILIZER GRID</h2>
+    <p>Move Slippage and MEV, open a path for Stabi, and clear 15 puzzles with as few moves as possible.</p>
+    <div class="mascot">S</div>
+    <button class="cta" id="begin">BEGIN ESCAPE →</button>
+    <div class="field-notes">
+      <div><b>MOVE & ESCAPE</b><small>Every block has one direction. Make room and guide Stabi to the portal on the right.</small></div>
+      <div><b>15 LEVELS // 45 STARS</b><small>Meet each move target to earn three stars. Progress is saved on this device.</small></div>
+      <div><b>CLEAR THE PATH</b><small>Horizontal blocks are Slippage. Vertical blocks are MEV.</small></div>
+    </div>
+    <footer><span>Built for Stabilizer</span><span>Creator · @Msabarrr</span></footer>
+  </div>
+</section>
+
+<section class="game" id="game">
+ <div class="card">
+  <div class="game-head">
+    <div><div class="level-tag" id="levelTag">LEVEL 01 / 15</div><div class="level-name" id="levelName">Langkah pertama</div></div>
+    <button class="icon-btn" id="levelsBtn" aria-label="Pilih level">▦</button>
+  </div>
+  <div class="stats">
+    <div><small>LANGKAH</small><b id="moves">0</b></div>
+    <div class="center"><small>TARGET 3 BINTANG</small><b class="gold" id="target">3 langkah</b></div>
+    <div class="right"><small>TERBAIK</small><b id="best">—</b></div>
+  </div>
+  <p class="instruction">Geser balok, lalu bawa Stabi ke portal di kanan.</p>
+  <div class="board-wrap">
+    <div class="board" id="board"><div class="grid"></div></div>
+    <div class="exit">EXIT<br>→</div>
+  </div>
+  <div class="controls"><button id="undo">↶ Undo</button><button id="restart">↻ Ulangi</button></div>
+  <div class="controls three"><button id="hint">✦ Kisi-kisi</button><button id="neg">← / ↑</button><button id="pos">→ / ↓</button></div>
+  <div class="status" id="status">Pilih balok lalu geser sesuai arahnya.</div>
+  <footer><span>Fan-made · unofficial</span><span>Progress di perangkat ini</span></footer>
+ </div>
+</section>
+</main>
+
+<div class="overlay" id="levelOverlay"><div class="modal"><h3>Pilih Level</h3><p>Best moves dan bintang tersimpan di browser ini.</p><div class="level-grid" id="levelsGrid"></div><button class="wide" id="closeLevels">Tutup</button></div></div>
+<div class="overlay" id="resultOverlay"><div class="modal result"><div class="topbrand">PUZZLE CLEARED</div><h3 id="resultTitle">LEVEL CLEARED</h3><div class="result-stars" id="resultStars">★★★</div><p id="resultText"></p><div class="controls"><button id="retry">Ulangi</button><button class="cta" id="nextLevel">Next Level →</button></div></div></div>
+<script src="game.js"></script>
+</body>
+</html>
