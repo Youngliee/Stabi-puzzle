@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -29,29 +29,29 @@
 <section class="game" id="game">
  <div class="card">
   <div class="game-head">
-    <div><div class="level-tag" id="levelTag">LEVEL 01 / 15</div><div class="level-name" id="levelName">Langkah pertama</div></div>
-    <button class="icon-btn" id="levelsBtn" aria-label="Pilih level">▦</button>
+    <div><div class="level-tag" id="levelTag">LEVEL 01 / 15</div><div class="level-name" id="levelName">First Move</div></div>
+    <button class="icon-btn" id="levelsBtn" aria-label="Select level">▦</button>
   </div>
   <div class="stats">
-    <div><small>LANGKAH</small><b id="moves">0</b></div>
-    <div class="center"><small>TARGET 3 BINTANG</small><b class="gold" id="target">3 langkah</b></div>
-    <div class="right"><small>TERBAIK</small><b id="best">—</b></div>
+    <div><small>MOVES</small><b id="moves">0</b></div>
+    <div class="center"><small>3-STAR TARGET</small><b class="gold" id="target">3 moves</b></div>
+    <div class="right"><small>BEST</small><b id="best">—</b></div>
   </div>
-  <p class="instruction">Geser balok, lalu bawa Stabi ke portal di kanan.</p>
+  <p class="instruction">Slide the blocks, then guide Stabi to the exit on the right.</p>
   <div class="board-wrap">
     <div class="board" id="board"><div class="grid"></div></div>
     <div class="exit">EXIT<br>→</div>
   </div>
-  <div class="controls"><button id="undo">↶ Undo</button><button id="restart">↻ Ulangi</button></div>
-  <div class="controls three"><button id="hint">✦ Kisi-kisi</button><button id="neg">← / ↑</button><button id="pos">→ / ↓</button></div>
-  <div class="status" id="status">Pilih balok lalu geser sesuai arahnya.</div>
-  <footer><span>Fan-made · unofficial</span><span>Progress di perangkat ini</span></footer>
+  <div class="controls"><button id="undo">↶ Undo</button><button id="restart">↻ Restart</button></div>
+  <div class="controls three"><button id="hint">✦ Hint</button><button id="neg">← / ↑</button><button id="pos">→ / ↓</button></div>
+  <div class="status" id="status">Select a block and slide it in its allowed direction.</div>
+  <footer><span>Fan-made · unofficial</span><span>Progress saved on this device</span></footer>
  </div>
 </section>
 </main>
 
-<div class="overlay" id="levelOverlay"><div class="modal"><h3>Pilih Level</h3><p>Best moves dan bintang tersimpan di browser ini.</p><div class="level-grid" id="levelsGrid"></div><button class="wide" id="closeLevels">Tutup</button></div></div>
-<div class="overlay" id="resultOverlay"><div class="modal result"><div class="topbrand">PUZZLE CLEARED</div><h3 id="resultTitle">LEVEL CLEARED</h3><div class="result-stars" id="resultStars">★★★</div><p id="resultText"></p><div class="controls"><button id="retry">Ulangi</button><button class="cta" id="nextLevel">Next Level →</button></div></div></div>
+<div class="overlay" id="levelOverlay"><div class="modal"><h3>Select Level</h3><p>Best moves and stars are saved in this browser.</p><div class="level-grid" id="levelsGrid"></div><button class="wide" id="closeLevels">Close</button></div></div>
+<div class="overlay" id="resultOverlay"><div class="modal result"><div class="topbrand">PUZZLE CLEARED</div><h3 id="resultTitle">LEVEL CLEARED</h3><div class="result-stars" id="resultStars">★★★</div><p id="resultText"></p><div class="controls"><button id="retry">Retry</button><button class="cta" id="nextLevel">Next Level →</button></div></div></div>
 <script src="game.js"></script>
 </body>
 </html>
