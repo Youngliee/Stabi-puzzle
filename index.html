@@ -1,57 +1,69 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#021b19">
-<title>Stabi Escape — Playtest</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#031313">
+<meta name="description" content="Move Slippage and MEV, open a path for Stabi, and clear 15 sliding puzzles. A community-made game inspired by Stabilizer.">
+<title>Stabi Escape</title>
+<link rel="stylesheet" href="landing.css">
 </head>
 <body>
-<main class="wrap">
-<section class="landing" id="landing">
-  <div class="card hero-card">
-    <div class="topbrand">COMMUNITY-MADE • UNOFFICIAL</div>
-    <h1>STABI <span>ESCAPE</span></h1>
-    <h2>ESCAPE THE STABILIZER GRID</h2>
-    <p>Move Slippage and MEV, open a path for Stabi, and clear 15 puzzles with as few moves as possible.</p>
-    <div class="mascot">S</div>
-    <button class="cta" id="begin">BEGIN ESCAPE →</button>
-    <div class="field-notes">
-      <div><b>MOVE & ESCAPE</b><small>Every block has one direction. Make room and guide Stabi to the portal on the right.</small></div>
-      <div><b>15 LEVELS // 45 STARS</b><small>Meet each move target to earn three stars. Progress is saved on this device.</small></div>
-      <div><b>CLEAR THE PATH</b><small>Horizontal blocks are Slippage. Vertical blocks are MEV.</small></div>
+<main class="page">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="copy">
+    <div class="eyebrow">COMMUNITY-MADE • UNOFFICIAL</div>
+    <h1 class="title" id="hero-title">STABI<span>ESCAPE</span></h1>
+    <div class="sub">ESCAPE THE STABILIZER GRID</div>
+    <p class="desc">Move Slippage and MEV, open a path for Stabi, and clear 15 puzzles with as few moves as possible.</p>
+    <div class="actions"><a class="btn primary" id="play-link" href="play.html"><span id="play-label">BEGIN ESCAPE</span> <span aria-hidden="true">▶</span></a><button class="btn" id="fieldBtn" type="button" aria-haspopup="dialog" aria-controls="fieldModal">FIELD NOTES</button></div>
+    <p id="resume-note" class="resume-note" hidden></p>
+    <div class="micro">No wallet required • No name required • Progress saved on this device</div>
+    <a class="scrollHint" href="#guide">SCROLL FOR FIELD GUIDE ↓</a>
+  </div>
+  <div class="visual"><div class="tealGlow" aria-hidden="true"></div><div class="blueGlow" aria-hidden="true"></div><div class="orb"><div class="orbCharacter"><img src="assets/block-stabi.png" alt="Stabi, smiling and running in a teal jacket" draggable="false"></div></div></div>
+</section>
+<section class="intel" id="guide" aria-labelledby="guide-title">
+  <div class="intelHead"><div><div class="intelKicker">FIELD GUIDE // 01</div><h2 id="guide-title">MOVE & ESCAPE</h2></div><p class="intelLead">Every block has one direction. Make room, find the route, and guide Stabi to the portal on the right.</p></div>
+  <svg class="sprite-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="guide-mev" clipPathUnits="userSpaceOnUse"><path d="M228 138H1546Q1688 138 1688 280V584Q1688 731 1540 731H229Q80 731 80 586V283Q80 138 228 138Z"/></clipPath><clipPath id="guide-slippage" clipPathUnits="userSpaceOnUse"><path d="M221 156H480C515 120 554 109 585 127C608 138 618 149 620 156H1550Q1685 156 1685 290V608Q1685 735 1550 735H225Q94 735 94 604V290Q94 156 221 156Z"/></clipPath></defs></svg>
+  <div class="guideGrid">
+    <div class="guidePanel">
+      <div class="panelLabel collectLabel"><b>YOUR MISSION</b><span>REACH THE PORTAL</span></div>
+      <div class="itemList">
+        <div class="itemCard"><svg class="blockThumb" viewBox="91 115 1593 657" aria-hidden="true" focusable="false"><image href="assets/block-stabi.png" width="1774" height="887"/></svg><div><div class="itemTag">PLAYER BLOCK</div><div class="itemName">STABI</div><div class="itemDesc">Slide left or right. Reach the exit on the right side of the board.</div></div></div>
+        <div class="missionStrip"><strong>15 LEVELS // 45 STARS</strong><span>Meet each level's move target to earn three stars.</span></div>
+      </div>
     </div>
-    <footer><span>Built for Stabilizer</span><a href="https://x.com/Msabarrr" target="_blank" rel="noopener noreferrer">Creator · @Msabarrr</a></footer>
+    <div class="guidePanel">
+      <div class="panelLabel killLabel"><b>CLEAR THE PATH</b><span>SLIDING BLOCKS</span></div>
+      <div class="itemList">
+        <div class="itemCard"><svg class="blockThumb" viewBox="94 112 1591 623" aria-hidden="true" focusable="false"><image href="assets/block-slippage.png" width="1774" height="887" clip-path="url(#guide-slippage)"/></svg><div><div class="itemTag danger">HORIZONTAL</div><div class="itemName">SLIPPAGE</div><div class="itemDesc">Move left or right to make space for other blocks.</div></div></div>
+        <div class="itemCard"><svg class="blockThumb" viewBox="80 138 1608 593" aria-hidden="true" focusable="false"><image href="assets/block-mev.png" width="1774" height="887" clip-path="url(#guide-mev)"/></svg><div><div class="itemTag boss">VERTICAL</div><div class="itemName">MEV</div><div class="itemDesc">Move up or down to open Stabi's route.</div></div></div>
+      </div>
+    </div>
   </div>
+  <div class="missionStrip controls-strip"><strong>DRAG TO MOVE</strong><span>Or select a block and use the arrow buttons. Undo and restart are always available while solving. Use Hint for a suggested move. You have three hints per level.</span></div>
 </section>
-
-<section class="game" id="game">
- <div class="card">
-  <div class="game-head">
-    <div><div class="level-tag" id="levelTag">LEVEL 01 / 15</div><div class="level-name" id="levelName">Langkah pertama</div></div>
-    <button class="icon-btn" id="levelsBtn" aria-label="Pilih level">▦</button>
-  </div>
-  <div class="stats">
-    <div><small>LANGKAH</small><b id="moves">0</b></div>
-    <div class="center"><small>TARGET 3 BINTANG</small><b class="gold" id="target">3 langkah</b></div>
-    <div class="right"><small>TERBAIK</small><b id="best">—</b></div>
-  </div>
-  <p class="instruction">Geser balok, lalu bawa Stabi ke portal di kanan.</p>
-  <div class="board-wrap">
-    <div class="board" id="board"><div class="grid"></div></div>
-    <div class="exit">EXIT<br>→</div>
-  </div>
-  <div class="controls"><button id="undo">↶ Undo</button><button id="restart">↻ Ulangi</button></div>
-  <div class="controls three"><button id="hint" title="Maksimal 3 kali per level">✦ Kisi-kisi (3)</button><button id="neg">← / ↑</button><button id="pos">→ / ↓</button></div>
-  <div class="status" id="status">Pilih balok lalu geser sesuai arahnya.</div>
-  <footer><span>Fan-made · unofficial</span><span>Progress di perangkat ini</span></footer>
- </div>
-</section>
+<footer class="footer">
+  <div><div class="built">BUILT FOR</div><div class="brand"><img class="brandLogo" src="assets/stabilizer-logo.webp" alt=""><b>STABILIZER</b></div><div class="fine">A community-made puzzle inspired by Stabilizer. Independently created by Zarrr; unofficial.</div></div>
+  <div class="footerActions"><a class="smallbtn" href="https://x.com/Msabarrr" rel="noreferrer">CREATOR · @Msabarrr ↗</a></div>
+</footer>
 </main>
-
-<div class="overlay" id="levelOverlay"><div class="modal"><h3>Pilih Level</h3><p>Best moves dan bintang tersimpan di browser ini.</p><div class="level-grid" id="levelsGrid"></div><button class="wide" id="closeLevels">Tutup</button></div></div>
-<div class="overlay" id="resultOverlay"><div class="modal result"><div class="topbrand">PUZZLE CLEARED</div><h3 id="resultTitle">LEVEL CLEARED</h3><div class="result-stars" id="resultStars">★★★</div><p id="resultText"></p><div class="controls"><button id="retry">Ulangi</button><button class="cta" id="nextLevel">Next Level →</button></div></div></div>
-<script src="game.js"></script>
+<dialog class="note" id="fieldModal" aria-labelledby="notes-title">
+  <button class="close" id="closeField" type="button" aria-label="Close field notes">×</button>
+  <div class="kicker">INDEPENDENT COMMUNITY GAME</div><h2 id="notes-title">FIELD NOTES</h2><div class="rule"></div>
+  <p><b>Stabi Escape</b> is a fan-made sliding-block puzzle inspired by the Stabilizer ecosystem. Move Slippage and MEV to open a path for Stabi, clear all 15 levels, and find the shortest route to earn up to 45 stars. Your best results are saved on this device.</p>
+  <div class="meta">
+    <div class="metaBox"><small>CREATOR</small><a class="smallbtn" href="https://x.com/Msabarrr" rel="noreferrer">@Msabarrr ↗</a></div>
+    <div class="metaBox"><small>ECOSYSTEM</small><a class="metaLink" href="https://app.stabilizer.finance/" rel="noreferrer">Explore Stabilizer ↗</a></div>
+    <div class="metaBox"><small>BUILD</small><b>Community-made • Unofficial</b></div>
+    <div class="metaBox"><small>MISSION</small><b>Clear 15 levels · 45 stars</b></div>
+  </div>
+</dialog>
+<script src="levels.js"></script>
+<script src="engine.js"></script>
+<script src="results.js"></script>
+<script src="progress.js"></script>
+<script src="landing.js"></script>
 </body>
 </html>

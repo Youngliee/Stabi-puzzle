@@ -1,43 +1,254 @@
-const PIECES=[{id:'S',o:'H',len:2},{id:'A',o:'V',len:2},{id:'B',o:'V',len:3},{id:'C',o:'H',len:2},{id:'D',o:'H',len:3},{id:'E',o:'V',len:2},{id:'F',o:'H',len:2},{id:'G',o:'V',len:2},{id:'H',o:'H',len:2},{id:'I',o:'V',len:2}];
-const LEVELS=[
-{name:'Langkah pertama',target:3,p:{S:[3,2],A:[0,2],B:[2,0],C:[3,0],D:[0,4],E:[5,0],F:[3,5],G:[1,1],H:[3,3],I:[5,4]}},
-{name:'Jalur sempit',target:4,p:{S:[3,2],A:[0,1],B:[2,0],C:[3,0],D:[1,4],E:[5,0],F:[3,5],G:[1,1],H:[3,3],I:[5,4]}},
-{name:'Belok kiri',target:4,p:{S:[3,2],A:[0,0],B:[2,0],C:[3,0],D:[1,4],E:[5,1],F:[4,5],G:[1,1],H:[3,3],I:[5,3]}},
-{name:'Pintu ganda',target:5,p:{S:[2,2],A:[0,0],B:[2,3],C:[3,0],D:[3,4],E:[5,0],F:[3,5],G:[1,1],H:[3,3],I:[5,2]}},
-{name:'Lintasan padat',target:5,p:{S:[3,2],A:[0,2],B:[2,0],C:[3,0],D:[1,4],E:[5,0],F:[0,5],G:[1,1],H:[3,3],I:[5,4]}},
-{name:'Tiga penjaga',target:6,p:{S:[2,2],A:[0,0],B:[2,3],C:[3,0],D:[3,4],E:[5,0],F:[3,5],G:[1,0],H:[3,3],I:[5,2]}},
-{name:'Jalan memutar',target:7,p:{S:[2,2],A:[0,0],B:[2,3],C:[1,0],D:[3,4],E:[5,0],F:[3,5],G:[1,4],H:[3,3],I:[5,2]}},
-{name:'Simpang enam',target:10,p:{S:[0,2],A:[0,0],B:[2,0],C:[3,0],D:[1,4],E:[5,0],F:[4,5],G:[1,0],H:[1,3],I:[5,2]}},
-{name:'Kunci silang',target:7,p:{S:[1,2],A:[0,4],B:[2,3],C:[3,0],D:[3,4],E:[5,0],F:[3,5],G:[1,3],H:[3,3],I:[5,2]}},
-{name:'Lorong ungu',target:8,p:{S:[0,2],A:[0,0],B:[2,1],C:[3,0],D:[2,4],E:[5,0],F:[3,5],G:[1,3],H:[3,3],I:[5,2]}},
-{name:'Dua arah',target:8,p:{S:[2,2],A:[0,2],B:[2,3],C:[3,0],D:[3,4],E:[5,0],F:[0,5],G:[1,0],H:[3,3],I:[5,2]}},
-{name:'Gerbang rapat',target:9,p:{S:[0,2],A:[0,0],B:[2,0],C:[3,0],D:[2,4],E:[5,0],F:[2,5],G:[1,0],H:[3,3],I:[5,2]}},
-{name:'Putaran akhir',target:9,p:{S:[0,2],A:[0,0],B:[2,1],C:[1,0],D:[3,4],E:[5,0],F:[4,5],G:[1,3],H:[3,3],I:[5,2]}},
-{name:'Benteng MEV',target:10,p:{S:[0,2],A:[0,0],B:[2,1],C:[3,0],D:[1,4],E:[5,0],F:[0,5],G:[1,0],H:[3,3],I:[5,4]}},
-{name:'Exit terakhir',target:10,p:{S:[0,2],A:[0,0],B:[2,1],C:[3,0],D:[2,4],E:[5,0],F:[0,5],G:[1,0],H:[3,3],I:[5,4]}}
-];
-const SIZE=6,GOAL_X=4,GOAL_Y=2,$=id=>document.getElementById(id);
-let saved;try{saved=JSON.parse(localStorage.getItem('stabiEscapeProgress'))}catch(e){};const progress=saved||{unlocked:1,stars:{},best:{}};
-const MAX_HINTS=3,hintUses={};
-let levelIndex=0,state=null,moves=0,history=[],selected='S',drag=null;
-const copy=s=>Object.fromEntries(Object.entries(s).map(([k,v])=>[k,[...v]]));
-const def=id=>PIECES.find(x=>x.id===id);
-function occupied(s,ignore){const m=new Map();for(const p of PIECES){if(p.id===ignore)continue;const [x,y]=s[p.id];for(let i=0;i<p.len;i++){const cx=x+(p.o==='H'?i:0),cy=y+(p.o==='V'?i:0);m.set(cx+','+cy,p.id)}}return m}
-function canMove(id,d,s=state){if(!d)return false;const p=def(id),[x,y]=s[id],g=occupied(s,id),nx=x+(p.o==='H'?d:0),ny=y+(p.o==='V'?d:0);if(nx<0||ny<0||(p.o==='H'&&nx+p.len>SIZE)||(p.o==='V'&&ny+p.len>SIZE))return false;for(let i=0;i<p.len;i++){const cx=nx+(p.o==='H'?i:0),cy=ny+(p.o==='V'?i:0);if(g.has(cx+','+cy))return false}return true}
-function maxMove(id,dir,s=state){let n=0;while(canMove(id,n+dir,s))n+=dir;return n}
-function movePiece(id,d,record=true){if(!canMove(id,d))return false;if(record)history.push({state:copy(state),moves});const p=def(id);state[id][p.o==='H'?0:1]+=d;moves++;selected=id;render();if(state.S[0]===GOAL_X&&state.S[1]===GOAL_Y)setTimeout(win,180);return true}
-function render(){const board=$('board');board.querySelectorAll('.piece').forEach(el=>el.remove());for(const p of PIECES){const [x,y]=state[p.id],el=document.createElement('div');el.className='piece '+(p.o==='H'?'h':'v')+(p.id==='S'?' stabi':'')+(selected===p.id?' selected':'');el.style.left=(x*100/6)+'%';el.style.top=(y*100/6)+'%';el.style.width=((p.o==='H'?p.len:1)*100/6)+'%';el.style.height=((p.o==='V'?p.len:1)*100/6)+'%';const inner=document.createElement('div');inner.className='piece-inner';inner.textContent=p.id==='S'?'STABI →':p.o==='H'?'SLIPPAGE':'MEV';el.append(inner);board.append(el);el.addEventListener('click',()=>{selected=p.id;render()});el.addEventListener('pointerdown',e=>{selected=p.id;drag={id:p.id,x:e.clientX,y:e.clientY};el.setPointerCapture?.(e.pointerId);render()});el.addEventListener('pointerup',e=>{if(!drag||drag.id!==p.id)return;const r=board.getBoundingClientRect(),cell=r.width/6;let d=p.o==='H'?(e.clientX-drag.x)/cell:(e.clientY-drag.y)/cell;d=Math.round(d);if(d){const sign=Math.sign(d),m=maxMove(p.id,sign),amount=Math.min(Math.abs(d),Math.abs(m))*sign;if(amount)movePiece(p.id,amount)}drag=null})}const L=LEVELS[levelIndex];$('moves').textContent=moves;$('target').textContent=L.target+' langkah';$('best').textContent=progress.best[levelIndex+1]??'—';$('levelTag').textContent='LEVEL '+String(levelIndex+1).padStart(2,'0')+' / 15';$('levelName').textContent=L.name;const p=def(selected);$('neg').textContent=p.o==='H'?'←':'↑';$('pos').textContent=p.o==='H'?'→':'↓';$('neg').disabled=!maxMove(selected,-1);$('pos').disabled=!maxMove(selected,1);$('undo').disabled=!history.length;const remaining=Math.max(0,MAX_HINTS-(hintUses[levelIndex]||0));$('hint').textContent='✦ Kisi-kisi ('+remaining+')';$('hint').disabled=remaining===0}
-function loadLevel(i){levelIndex=i;state=copy(LEVELS[i].p);moves=0;history=[];selected='S';$('status').textContent='Pilih balok lalu geser sesuai arahnya.';$('resultOverlay').classList.remove('show');$('levelOverlay').classList.remove('show');render()}
-const starsFor=(m,t)=>m<=t?3:m<=t+2?2:1;
-function save(){localStorage.setItem('stabiEscapeProgress',JSON.stringify(progress))}
-function win(){const n=levelIndex+1,s=starsFor(moves,LEVELS[levelIndex].target);progress.stars[n]=Math.max(progress.stars[n]||0,s);progress.best[n]=progress.best[n]?Math.min(progress.best[n],moves):moves;progress.unlocked=Math.max(progress.unlocked,Math.min(15,n+1));save();$('resultStars').textContent='★'.repeat(s)+'☆'.repeat(3-s);$('resultTitle').textContent=LEVELS[levelIndex].name+' clear!';$('resultText').textContent=moves+' langkah • Best '+progress.best[n]+' • '+s+'/3 bintang';$('nextLevel').style.display=n<15?'block':'none';$('resultOverlay').classList.add('show');buildLevels()}
-function buildLevels(){const g=$('levelsGrid');g.innerHTML='';LEVELS.forEach((L,i)=>{const n=i+1,b=document.createElement('button');b.className='lvl'+(n>progress.unlocked?' locked':'');b.disabled=n>progress.unlocked;b.innerHTML=n+'<small>'+('★'.repeat(progress.stars[n]||0))+'</small>';b.onclick=()=>loadLevel(i);g.append(b)})}
-function stateKey(s){return PIECES.map(p=>s[p.id].join(',')).join('|')}
-function hintSearch(start){const q=[copy(start)],seen=new Set([stateKey(start)]),parent=new Map(),action=new Map();let qi=0,goal=null;while(qi<q.length&&q.length<30000){const cur=q[qi++];if(cur.S[0]===GOAL_X&&cur.S[1]===GOAL_Y){goal=cur;break}for(const p of PIECES)for(const dir of [-1,1]){let d=dir;while(canMove(p.id,d,cur)){const ns=copy(cur);ns[p.id][p.o==='H'?0:1]+=d;const k=stateKey(ns);if(!seen.has(k)){seen.add(k);q.push(ns);parent.set(k,stateKey(cur));action.set(k,{id:p.id,d})}d+=dir}}}if(!goal)return null;const startK=stateKey(start);let k=stateKey(goal),first=null;while(k!==startK){first=action.get(k);k=parent.get(k)}return first}
-$('begin').onclick=()=>{$('landing').classList.add('hide');$('game').classList.add('active');loadLevel(Math.max(0,Math.min(14,(progress.unlocked||1)-1)))};
-$('levelsBtn').onclick=()=>{$('levelOverlay').classList.add('show');buildLevels()};$('closeLevels').onclick=()=>$('levelOverlay').classList.remove('show');
-$('undo').onclick=()=>{const h=history.pop();if(h){state=h.state;moves=h.moves;render()}};$('restart').onclick=()=>loadLevel(levelIndex);$('retry').onclick=()=>loadLevel(levelIndex);$('nextLevel').onclick=()=>loadLevel(Math.min(14,levelIndex+1));
-$('neg').onclick=()=>{const d=maxMove(selected,-1);if(d)movePiece(selected,d)};$('pos').onclick=()=>{const d=maxMove(selected,1);if(d)movePiece(selected,d)};
-$('hint').onclick=()=>{const n=hintUses[levelIndex]||0;if(n>=MAX_HINTS){$('status').textContent='Kisi-kisi untuk level ini sudah habis.';render();return}hintUses[levelIndex]=n+1;render();$('status').textContent='Mencari satu langkah terbaik…';setTimeout(()=>{const a=hintSearch(state);if(!a){hintUses[levelIndex]=Math.max(0,(hintUses[levelIndex]||1)-1);$('status').textContent='Belum menemukan petunjuk.';render();return}selected=a.id;const p=def(a.id);$('status').textContent='Kisi-kisi: pilih '+(a.id==='S'?'STABI':p.o==='H'?'SLIPPAGE':'MEV')+' lalu geser '+(p.o==='H'?(a.d<0?'ke kiri':'ke kanan'):(a.d<0?'ke atas':'ke bawah'))+'.';render()},20)};
-document.addEventListener('keydown',e=>{if(!$('game').classList.contains('active'))return;if(e.key==='z')$('undo').click();const p=def(selected);if(p.o==='H'&&e.key==='ArrowLeft')$('neg').click();if(p.o==='H'&&e.key==='ArrowRight')$('pos').click();if(p.o==='V'&&e.key==='ArrowUp')$('neg').click();if(p.o==='V'&&e.key==='ArrowDown')$('pos').click()});
-buildLevels();
+(function(){
+  'use strict';
+  const E=window.EscapeEngine,levels=window.ESCAPE_LEVELS,$=id=>document.getElementById(id),board=$('board');
+  const S=window.EscapeSound||{available:false,enabled:false,stop(){},slide(){},victory(){},toggle(){}};
+  const R=window.EscapeResults;
+  const SVG_NS='http://www.w3.org/2000/svg';
+  // Display the supplied artwork through a tight viewport; the source PNGs stay unchanged.
+  const BLOCK_ART={
+    stabi:{src:'assets/block-stabi.png',viewBox:'91 115 1593 657'},
+    mev:{src:'assets/block-mev.png',viewBox:'80 138 1608 593',clip:'M228 138H1546Q1688 138 1688 280V584Q1688 731 1540 731H229Q80 731 80 586V283Q80 138 228 138Z'},
+    slippage:{src:'assets/block-slippage.png',viewBox:'94 112 1591 623',clip:'M221 156H480C515 120 554 109 585 127C608 138 618 149 620 156H1550Q1685 156 1685 290V608Q1685 735 1550 735H225Q94 735 94 604V290Q94 156 221 156Z'}
+  };
+  let scoreReturn=null,scoreJob=0,scoreURL=null,scoreFile=null,scoreSnapshot=null,avatarPromise=null,sharing=false;
+  let hintWorker=null,hintTimer=null,hintJob=0,hintIndex=-1;
+  const STORE='stabi-escape-v1';let storageOK=true,progress={unlocked:0,current:0,best:{},hintsUsed:{}},state=[],history=[],count=0,current=0,selected=0,drag=null,won=false,timer=null,elements=[],returnFocus=null;
+  try{progress=window.EscapeProgress.restore(levels,JSON.parse(localStorage.getItem(STORE)||'null'));}catch(_){storageOK=false;}
+  function save(){try{localStorage.setItem(STORE,JSON.stringify(progress));}catch(_){storageOK=false;$('notice').textContent='Progress cannot be saved in this browser.';}}
+  function setNotice(text){$('notice').textContent=text;}
+  function unit(){return board.clientWidth/6;}
+  function pieceName(p){return p.id==='S'?'Stabi':p.axis==='v'?'MEV':'Slippage';}
+  function renderHintButton(){
+    const remaining=window.EscapeProgress.hintsRemaining(progress,current),button=$('hint-button');
+    button.disabled=won||remaining===0;
+    $('hint-label').textContent='Hint · '+remaining+'/3';
+    button.setAttribute('aria-label','Hint, '+remaining+' of 3 remaining for this level');
+    button.title=remaining?'Show one suggested move':'All 3 hints used for this level';
+  }
+  function clearHint(){
+    hintJob++;clearTimeout(hintTimer);hintTimer=null;
+    if(hintWorker){hintWorker.terminate();hintWorker=null;}
+    if(elements[hintIndex])elements[hintIndex].classList.remove('hinted');
+    hintIndex=-1;$('hint-panel').hidden=true;$('hint-text').textContent='';
+    $('hint-button').setAttribute('aria-expanded','false');renderHintButton();
+  }
+  function requestHint(){
+    if(won||modalIsOpen()||drag||window.EscapeProgress.hintsRemaining(progress,current)===0)return;
+    clearHint();
+    const job=hintJob;let settled=false;
+    $('hint-panel').hidden=false;$('hint-button').disabled=true;
+    $('hint-button').setAttribute('aria-expanded','true');$('hint-label').textContent='Finding…';
+    $('hint-text').textContent='Finding one move from your current position…';
+    function complete(move){
+      if(job!==hintJob||settled)return;
+      settled=true;
+      clearTimeout(hintTimer);hintTimer=null;
+      if(hintWorker){hintWorker.terminate();hintWorker=null;}
+      if(!move||!E.move(state,move[0],move[1])){
+        renderHintButton();
+        $('hint-text').textContent='No hint was used. Try again, or make room above or below the MEV blocking Stabi.';
+        return;
+      }
+      if(!window.EscapeProgress.useHint(progress,current)){clearHint();return;}
+      save();renderHintButton();
+      const [index,delta]=move,p=state[index],direction=p.axis==='h'?(delta<0?'left':'right'):(delta<0?'up':'down');
+      hintIndex=index;select(index);elements[index].classList.add('hinted');
+      $('hint-text').textContent='Move the highlighted '+pieceName(p)+' at column '+(p.x+1)+', row '+(p.y+1)+', '+Math.abs(delta)+' '+(Math.abs(delta)===1?'space':'spaces')+' '+direction+'.';
+    }
+    try{
+      hintWorker=new Worker('hint-worker.js');
+      hintWorker.onmessage=event=>{if(event.data.id===job)complete(event.data.move);};
+      hintWorker.onerror=()=>complete(null);
+      hintWorker.postMessage({id:job,state:state.map(p=>({...p}))});
+      hintTimer=setTimeout(()=>complete(null),10000);
+    }catch(_){complete(null);}
+  }
+  function addPieceArt(el,p,index){
+    const art=BLOCK_ART[p.id==='S'?'stabi':p.axis==='v'?'mev':'slippage'];
+    const label=document.createElement('span');
+    label.className='block-fallback';label.textContent=pieceName(p)+(p.id==='S'?' →':'');label.setAttribute('aria-hidden','true');el.append(label);
+    const svg=document.createElementNS(SVG_NS,'svg');
+    svg.setAttribute('class','piece-art');svg.setAttribute('viewBox',art.viewBox);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+    const img=document.createElementNS(SVG_NS,'image');
+    img.setAttribute('width','1774');img.setAttribute('height','887');
+    if(art.clip){
+      const defs=document.createElementNS(SVG_NS,'defs'),clip=document.createElementNS(SVG_NS,'clipPath'),path=document.createElementNS(SVG_NS,'path'),id='block-clip-'+index;
+      clip.setAttribute('id',id);clip.setAttribute('clipPathUnits','userSpaceOnUse');path.setAttribute('d',art.clip);path.setAttribute('fill','#fff');clip.append(path);defs.append(clip);svg.append(defs);img.setAttribute('clip-path','url(#'+id+')');
+    }
+    img.addEventListener('load',()=>el.classList.add('art-ready'),{once:true});
+    img.addEventListener('error',()=>{svg.remove();el.classList.remove('art-ready');},{once:true});
+    svg.append(img);el.append(svg);img.setAttribute('href',art.src);
+  }
+  function renderPiece(i,delta=0){
+    const p=state[i],el=elements[i],u=unit(),pad=Math.max(3,u*.065),w=(p.axis==='h'?p.len:1)*u-pad*2,h=(p.axis==='v'?p.len:1)*u-pad*2;
+    el.style.left=(p.x*u+pad+(p.axis==='h'?delta:0))+'px';el.style.top=(p.y*u+pad+(p.axis==='v'?delta:0))+'px';el.style.width=w+'px';el.style.height=h+'px';
+    el.style.setProperty('--art-width',(p.axis==='v'?h:w)+'px');el.style.setProperty('--art-height',(p.axis==='v'?w:h)+'px');
+    el.classList.toggle('selected',i===selected);el.setAttribute('aria-pressed',i===selected?'true':'false');el.setAttribute('aria-label',pieceName(p)+', '+(p.axis==='h'?'horizontal':'vertical')+', column '+(p.x+1)+', row '+(p.y+1));
+  }
+  function render(){state.forEach((_,i)=>renderPiece(i));$('moves').textContent=count;$('target').textContent=levels[current].par+' moves';$('best').textContent=progress.best[current]===undefined?'—':progress.best[current];$('undo').disabled=!history.length||won;const p=state[selected],b=E.bounds(state,selected);$('move-back').textContent=p.axis==='h'?'←':'↑';$('move-forward').textContent=p.axis==='h'?'→':'↓';$('move-back').setAttribute('aria-label','Move '+pieceName(p)+' '+(p.axis==='h'?'left':'up'));$('move-forward').setAttribute('aria-label','Move '+pieceName(p)+' '+(p.axis==='h'?'right':'down'));$('move-back').disabled=won||b.min===0;$('move-forward').disabled=won||b.max===0;$('selection-label').textContent=pieceName(p)+' selected · move '+(p.axis==='h'?'left / right':'up / down');const clear=E.bounds(state,0).max===4-state[0].x;board.classList.toggle('ready',clear);$('instruction').textContent=clear?'Path clear! Slide Stabi into the portal on the right.':'Slide Slippage and MEV, then guide Stabi to the exit on the right.';}
+  function activeModal(){return ['score-modal','level-modal','win-modal'].find(id=>!$(id).hidden);}
+  function modalIsOpen(){return !!activeModal();}
+  function totals(){return R.summarize(levels,progress.best,E.stars);}
+  function select(i){selected=i;render();}
+  function loadLevel(index){
+    clearHint();
+    cancelDrag();clearTimeout(timer);S.stop();scoreJob++;scoreReturn=null;scoreFile=null;scoreSnapshot=null;$('score-modal').hidden=true;board.parentElement.classList.remove('celebrating');timer=null;current=Math.max(0,Math.min(levels.length-1,index));state=levels[current].pieces.map(p=>({...p}));history=[];count=0;selected=0;won=false;board.replaceChildren();elements=[];
+    renderHintButton();
+    $('level-modal').hidden=true;$('win-modal').hidden=true;document.body.style.overflow='';$('level-number').textContent='LEVEL '+String(current+1).padStart(2,'0')+' / '+levels.length;$('level-title').textContent=levels[current].name;$('difficulty').textContent=current<2?'Warm-up':current<6?'Think ahead':current<10?'Challenge':current<14?'Expert':'Final';setNotice(storageOK?'': 'Progress cannot be saved in this browser.');
+    state.forEach((p,i)=>{const el=document.createElement('button');el.type='button';el.className='piece '+(p.axis==='v'?'vertical':'horizontal')+(p.id==='S'?' stabi':p.axis==='v'?' mev':' slippage');el.dataset.index=i;addPieceArt(el,p,i);el.addEventListener('pointerdown',ev=>pointerDown(ev,i));el.addEventListener('click',()=>{if(!won&&!modalIsOpen())select(i);});board.appendChild(el);elements.push(el);});
+    progress.current=current;save();render();
+  }
+  function commit(i,delta){if(won)return false;const next=E.move(state,i,delta);if(!next){if(delta!==0){elements[i].classList.remove('bump');void elements[i].offsetWidth;elements[i].classList.add('bump');setNotice('That block is blocked. Try moving another one.');}render();return false;}clearHint();history.push(state.map(p=>({...p})));state=next;count++;selected=i;setNotice('');render();S.slide(delta);if(E.solved(state))finish();return true;}
+  function finish(){
+    won=true;
+    clearHint();
+    progress.best[current]=Math.min(progress.best[current]===undefined?Infinity:progress.best[current],count);
+    progress.unlocked=Math.max(progress.unlocked,Math.min(levels.length-1,current+1));
+    progress.current=Math.min(levels.length-1,current+1);
+    save();render();S.victory();
+    board.parentElement.classList.add('celebrating');
+    elements[0].classList.add('escaped');
+    setNotice('Stabi reached the portal!');
+    const reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    timer=setTimeout(()=>{
+      const stars=E.stars(count,levels[current].par);
+      $('win-stars').replaceChildren();
+      for(let i=0;i<3;i++){
+        const star=document.createElement('span');
+        star.className=i<stars?'earned':'empty';
+        star.textContent='★';star.style.setProperty('--order',i);star.setAttribute('aria-hidden','true');
+        $('win-stars').append(star);
+      }
+      $('win-stars').setAttribute('aria-label',stars+' stars');
+      const summary=totals();
+      $('win-total-stars').textContent=summary.stars+' / '+summary.maxStars+' ★';
+      $('win-completed').textContent=summary.completed+' / '+summary.totalLevels;
+      $('win-title').textContent=summary.allComplete?'All levels cleared!':'Stabi made it!';
+      $('win-summary').textContent='Level '+(current+1)+' cleared in '+count+' moves. Your best: '+progress.best[current]+'.';
+      $('next-level').innerHTML=current===levels.length-1?'Choose level <span>▦</span>':'Next level <span>→</span>';
+      openModal('win-modal');
+    },reducedMotion?120:850);
+  }
+  function getAvatar(){
+    const existing=document.querySelector('.winner-stabi');
+    if(existing&&existing.complete&&existing.naturalWidth)return Promise.resolve(existing);
+    if(!avatarPromise)avatarPromise=new Promise(resolve=>{
+      const img=new Image();let done=false;
+      const finish=image=>{if(done)return;done=true;clearTimeout(timeout);resolve(image);};
+      const timeout=setTimeout(()=>finish(null),5000);
+      img.onload=()=>finish(img);img.onerror=()=>finish(null);img.src='assets/block-stabi.png';
+    });
+    return avatarPromise;
+  }
+  async function prepareCard(summary,job){
+    try{
+      const mascot=await getAvatar();
+      if(job!==scoreJob||$('score-modal').hidden)return;
+      const canvas=document.createElement('canvas'),context=canvas.getContext('2d');
+      if(!context)throw new Error('Canvas unavailable');
+      R.drawCard(context,summary,mascot);
+      const blob=await new Promise((resolve,reject)=>{
+        if(!canvas.toBlob){reject(new Error('PNG unavailable'));return;}
+        canvas.toBlob(value=>value?resolve(value):reject(new Error('PNG empty')),'image/png');
+      });
+      if(job!==scoreJob||$('score-modal').hidden)return;
+      if(scoreURL)URL.revokeObjectURL(scoreURL);
+      scoreURL=URL.createObjectURL(blob);
+      const filename='stabi-escape-'+summary.stars+'-of-'+summary.maxStars+'-stars.png';
+      $('score-preview').src=scoreURL;
+      $('score-preview').alt='Stabi Escape scorecard: '+summary.stars+' of '+summary.maxStars+' stars, '+summary.completed+' of '+summary.totalLevels+' levels cleared.';
+      $('score-preview').hidden=false;$('score-card-status').hidden=true;
+      $('download-score').href=scoreURL;$('download-score').download=filename;$('download-score').hidden=false;
+      try{
+        scoreFile=new File([blob],filename,{type:'image/png'});
+        $('share-image').hidden=!(navigator.share&&navigator.canShare&&navigator.canShare({files:[scoreFile]}));
+      }catch(_){scoreFile=null;$('share-image').hidden=true;}
+      $('score-card-frame').setAttribute('aria-busy','false');
+    }catch(_){
+      if(job!==scoreJob||$('score-modal').hidden)return;
+      $('score-card-status').textContent='The card could not be created in this browser. You can still share your score text on X.';
+      $('score-card-frame').setAttribute('aria-busy','false');
+    }
+  }
+  function showScore(){
+    if(!$('score-modal').hidden)return;
+    cancelDrag();S.stop();
+    scoreReturn={modal:activeModal(),focus:document.activeElement,previousFocus:returnFocus};
+    if(scoreReturn.modal)$(scoreReturn.modal).hidden=true;
+    const summary=totals();scoreSnapshot=summary;scoreFile=null;const job=++scoreJob;
+    $('score-title').textContent=summary.allComplete?'All levels cleared!':'Stabi Escape score';
+    $('score-intro').textContent='Your total uses the best star rating from each level.';
+    $('score-total-stars').textContent=summary.stars+' / '+summary.maxStars+' ★';
+    $('score-completed').textContent=summary.completed+' / '+summary.totalLevels;
+    $('score-preview').hidden=true;$('score-preview').removeAttribute('src');
+    $('score-card-status').hidden=false;$('share-status').textContent='';
+    $('download-score').hidden=true;$('download-score').removeAttribute('href');
+    $('share-image').hidden=true;$('share-image').disabled=false;
+    $('score-actions').hidden=summary.completed===0;
+    $('share-x').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(R.shareText(summary));
+    $('score-card-frame').setAttribute('aria-busy',summary.completed?'true':'false');
+    $('score-card-status').textContent=summary.completed?'Preparing your scorecard…':'Clear one level to create your scorecard.';
+    openModal('score-modal');
+    if(summary.completed)prepareCard(summary,job);
+  }
+  function closeScore(){
+    scoreJob++;$('score-modal').hidden=true;
+    const back=scoreReturn;scoreReturn=null;
+    if(back&&back.modal){
+      $(back.modal).hidden=false;document.body.style.overflow='hidden';returnFocus=back.previousFocus;
+      if(back.focus&&document.contains(back.focus))back.focus.focus();
+    }else{
+      document.body.style.overflow='';if(returnFocus&&document.contains(returnFocus))returnFocus.focus();
+    }
+  }
+  async function shareImage(){
+    if(!scoreFile||!scoreSnapshot||sharing)return;
+    sharing=true;$('share-image').disabled=true;$('share-status').textContent='';
+    const job=scoreJob;
+    try{
+      await navigator.share({files:[scoreFile],title:'Stabi Escape',text:R.shareText(scoreSnapshot)});
+    }catch(error){
+      if(job===scoreJob&&error.name!=='AbortError')$('share-status').textContent='Download the PNG, then attach it in your chosen app.';
+    }finally{
+      sharing=false;if(job===scoreJob)$('share-image').disabled=false;
+    }
+  }
+  function pointerDown(ev,i){if(won||modalIsOpen()||drag||ev.button>0)return;ev.preventDefault();if(hintWorker)clearHint();select(i);const el=elements[i],axis=state[i].axis;drag={i,id:ev.pointerId,start:axis==='h'?ev.clientX:ev.clientY,delta:0,unit:unit(),bounds:E.bounds(state,i)};el.classList.add('dragging');try{el.setPointerCapture(ev.pointerId);}catch(_){}el.addEventListener('pointermove',pointerMove);el.addEventListener('pointerup',pointerUp);el.addEventListener('pointercancel',pointerCancel);el.addEventListener('lostpointercapture',pointerCancel);}
+  function pointerMove(ev){if(!drag||ev.pointerId!==drag.id)return;ev.preventDefault();const axis=state[drag.i].axis,raw=(axis==='h'?ev.clientX:ev.clientY)-drag.start;drag.delta=Math.max(drag.bounds.min*drag.unit,Math.min(drag.bounds.max*drag.unit,raw));renderPiece(drag.i,drag.delta);}
+  function cleanupDrag(){if(!drag)return null;const d=drag;drag=null;const el=elements[d.i];el.classList.remove('dragging');el.removeEventListener('pointermove',pointerMove);el.removeEventListener('pointerup',pointerUp);el.removeEventListener('pointercancel',pointerCancel);el.removeEventListener('lostpointercapture',pointerCancel);try{if(el.hasPointerCapture(d.id))el.releasePointerCapture(d.id);}catch(_){}return d;}
+  function pointerUp(ev){if(!drag||ev.pointerId!==drag.id)return;pointerMove(ev);const d=cleanupDrag();commit(d.i,Math.round(d.delta/d.unit));}
+  function pointerCancel(ev){if(drag&&ev.pointerId===drag.id){cleanupDrag();render();}}
+  function cancelDrag(){if(drag){cleanupDrag();render();}}
+  function openModal(id){cancelDrag();clearHint();returnFocus=document.activeElement;$(id).hidden=false;document.body.style.overflow='hidden';const focus=$(id).querySelector('button:not(:disabled)');if(focus)focus.focus();}
+  function closeLevels(){$('level-modal').hidden=true;document.body.style.overflow='';if(returnFocus&&document.contains(returnFocus))returnFocus.focus();}
+  function showLevels(){clearTimeout(timer);S.stop();$('win-modal').hidden=true;const summary=totals();$('level-total-stars').textContent=summary.stars+' / '+summary.maxStars+' ★';$('level-completed').textContent=summary.completed+' / '+summary.totalLevels+' levels cleared';const grid=$('level-grid');grid.replaceChildren();levels.forEach((lv,i)=>{const btn=document.createElement('button');btn.type='button';btn.className='level-option'+(i===current?' active':'');btn.disabled=i>progress.unlocked;btn.setAttribute('aria-label','Level '+(i+1)+', '+lv.name+(btn.disabled?', locked':''));btn.textContent=i>progress.unlocked?'🔒':i+1;const star=document.createElement('span');star.textContent=progress.best[i]!==undefined?'★'.repeat(E.stars(progress.best[i],lv.par)):'—';btn.appendChild(star);btn.addEventListener('click',()=>loadLevel(i));grid.appendChild(btn);});openModal('level-modal');}
+  $('undo').addEventListener('click',()=>{cancelDrag();if(!history.length||won)return;clearHint();state=history.pop();count=Math.max(0,count-1);setNotice('Last move undone.');render();S.slide(1);});
+  $('hint-button').addEventListener('click',requestHint);
+  $('close-hint').addEventListener('click',()=>{clearHint();$('hint-button').focus();});
+  function renderSound(){const on=S.enabled,button=$('sound-toggle');button.disabled=!S.available;button.dataset.muted=String(!on);button.setAttribute('aria-pressed',String(on));button.setAttribute('aria-label',S.available?(on?'Mute sound':'Enable sound'):'Sound is unavailable in this browser');button.title=button.getAttribute('aria-label');$('sound-label').textContent=on?'Sound':'Muted';}
+  $('sound-toggle').addEventListener('click',()=>{S.toggle();renderSound();});
+  renderSound();
+  $('win-score').addEventListener('click',showScore);$('level-score').addEventListener('click',showScore);$('close-score').addEventListener('click',closeScore);$('share-image').addEventListener('click',shareImage);$('score-modal').addEventListener('click',ev=>{if(ev.target===$('score-modal'))closeScore();});
+  $('restart').addEventListener('click',()=>loadLevel(current));$('replay').addEventListener('click',()=>loadLevel(current));$('next-level').addEventListener('click',()=>current===levels.length-1?showLevels():loadLevel(current+1));$('levels-button').addEventListener('click',showLevels);$('win-levels').addEventListener('click',showLevels);$('close-levels').addEventListener('click',closeLevels);$('move-back').addEventListener('click',()=>commit(selected,-1));$('move-forward').addEventListener('click',()=>commit(selected,1));$('level-modal').addEventListener('click',ev=>{if(ev.target===$('level-modal'))closeLevels();});
+  document.addEventListener('keydown',ev=>{
+    const modalId=activeModal();
+    if(modalId){
+      if(ev.key==='Escape'){
+        if(modalId==='score-modal')closeScore();else if(modalId==='level-modal')closeLevels();
+        ev.preventDefault();
+      }
+      if(ev.key==='Tab'){
+        const f=Array.from($(modalId).querySelectorAll('button:not(:disabled),a[href]')).filter(el=>!el.closest('[hidden]'));
+        if(f.length&&ev.shiftKey&&document.activeElement===f[0]){f[f.length-1].focus();ev.preventDefault();}
+        else if(f.length&&!ev.shiftKey&&document.activeElement===f[f.length-1]){f[0].focus();ev.preventDefault();}
+      }
+      return;
+    }
+    const keys=state[selected].axis==='h'?['ArrowLeft','ArrowRight']:['ArrowUp','ArrowDown'];
+    if(keys.includes(ev.key)){ev.preventDefault();commit(selected,ev.key===keys[0]?-1:1);}
+    if(ev.key.toLowerCase()==='z'&&!ev.ctrlKey&&!ev.metaKey)$('undo').click();
+  });
+  window.addEventListener('resize',()=>{cancelDrag();render();});window.addEventListener('blur',cancelDrag);
+  if(!levels.every(lv=>E.validate(lv.pieces))){$('instruction').textContent='Levels could not be loaded. Please refresh the page.';return;}
+  loadLevel(progress.current);
+})();

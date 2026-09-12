@@ -1,0 +1,110 @@
+{
+  "source_commit": "aa73b25bbea09ee331e90aa2ab68d55bd551845a",
+  "source_version": 11,
+  "source_public_directory": "dist",
+  "destination_public_directory": ".",
+  "files": [
+    {
+      "path": "assets/block-mev.png",
+      "bytes": 2463855,
+      "sha256": "a94781f49cce4f5a0b150b9afacaa0c7c7736bb4536695c986c66254e13e6d33",
+      "git_blob_sha": "ec4483a5b980ebf31a38bed191dbf77545559fbb"
+    },
+    {
+      "path": "assets/block-slippage.png",
+      "bytes": 2114767,
+      "sha256": "ace0b0172b103c4f1f221071a55e2cac1da577bb1ce796d0c88218269bba294a",
+      "git_blob_sha": "afd41a97be60c2851e7d78c2c7a6efc36aa43d22"
+    },
+    {
+      "path": "assets/block-stabi.png",
+      "bytes": 1610277,
+      "sha256": "1bb689e0162a9f784a26dba90c34b99047cdf255852bcbb012293fb69f0bb0f7",
+      "git_blob_sha": "147f9cac0845a7783a3130b57872d2fb0ebadc6b"
+    },
+    {
+      "path": "assets/stabi.webp",
+      "bytes": 8160,
+      "sha256": "87dd76a9c778139ec93185875e1f4854d79f97a2bd10adda7d0b7bf74fbf8518",
+      "git_blob_sha": "754a7d4c5f48ff3774eb0ae37f8d0ea201d81382"
+    },
+    {
+      "path": "assets/stabilizer-logo.webp",
+      "bytes": 8536,
+      "sha256": "916e8e370cdee990c7131cc76dbc857c835310426ba4aaa53fdfc781c2215d94",
+      "git_blob_sha": "2f758727457e9f91b43efb9002631eb902c813d8"
+    },
+    {
+      "path": "engine.js",
+      "bytes": 2890,
+      "sha256": "36533256c79ae1340ddecd7dd0131ebbcbeda552b3db75bc5a98d030042f0cd4",
+      "git_blob_sha": "5abcebd6bc29bb6a306aad6673a23c2057b82573"
+    },
+    {
+      "path": "game.js",
+      "bytes": 21701,
+      "sha256": "a6c0e61ecf87dc331a08e11327c6cf93692bcc5d4c6c0fc41f33aae3ae8fbcec",
+      "git_blob_sha": "ffea90336e25cdf0c3d65aefa47a4cf422427760"
+    },
+    {
+      "path": "hint-worker.js",
+      "bytes": 339,
+      "sha256": "995b8655257ef4428e8e8ed808ff5aea4e9204285fcc924ddf455a6ff7abf0cb",
+      "git_blob_sha": "c379390f062151e5ad82dfac444e221582bb4d20"
+    },
+    {
+      "path": "index.html",
+      "bytes": 6103,
+      "sha256": "708c4accfeaba2767b92bf788508f6f128cce3063dc7298efee93f137c2fd8e5",
+      "git_blob_sha": "96926f1d55a242bfbf894c269ea9a00490164e7a"
+    },
+    {
+      "path": "landing.css",
+      "bytes": 12291,
+      "sha256": "e66ff746a6846c9bba6de4fe1f1af3efd8e9e257622277c9a06fade1fd901369",
+      "git_blob_sha": "207c73f8e8824caed57f349df8eeefa0676648ae"
+    },
+    {
+      "path": "landing.js",
+      "bytes": 1897,
+      "sha256": "adf448181e974a0d083b566ee56235b3b567a107dd2b250ee686d1d4613b3590",
+      "git_blob_sha": "329dcecb2a98a09f23dbf99c4f35e74de76585bc"
+    },
+    {
+      "path": "levels.js",
+      "bytes": 17113,
+      "sha256": "1fcae59cd5bc24444c590216821411197a23b498fffcca140fa7fccf66472367",
+      "git_blob_sha": "4baaef6128cd58aa7446da5e4ef7f727ae7dd44b"
+    },
+    {
+      "path": "play.html",
+      "bytes": 7159,
+      "sha256": "4bc0b39c3fe526465c2b57fea80182501212cbbddd07f9b8f983722430db1f84",
+      "git_blob_sha": "e882906a735f27bdd3391a781141f94b3f6784a5"
+    },
+    {
+      "path": "progress.js",
+      "bytes": 1742,
+      "sha256": "e476d471ff05f2e17e5727296b3e169b2ecfb55b9839bc042e13d685f4dbbf43",
+      "git_blob_sha": "ba55272f31c549db4b7d6c4ec731504774ce6db6"
+    },
+    {
+      "path": "results.js",
+      "bytes": 5451,
+      "sha256": "8c42f48fed1852cc0d492fac22f1804ece2c9f6aea712774a4ee1db787321a0d",
+      "git_blob_sha": "18e8b2c49915274cc926f804d6aa78fc16b0ee0f"
+    },
+    {
+      "path": "sound.js",
+      "bytes": 4263,
+      "sha256": "1e60402df84a59e5a9210b0c446957b4ba5c03082042c836a6b43c58b72df66f",
+      "git_blob_sha": "d2a231f5982440f0bd5ed5a6a63c4ce489698eee"
+    },
+    {
+      "path": "style.css",
+      "bytes": 15624,
+      "sha256": "c701dfad964dbe01feb89f1d72018bce73557668292d8974a4c67361811283b4",
+      "git_blob_sha": "7f561cb8d1f84ef3482e8420b95234669f67b5db"
+    }
+  ]
+}

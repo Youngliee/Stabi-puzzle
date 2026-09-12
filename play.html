@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071b1b">
+  <meta name="description" content="Guide Stabi to the portal in 15 sliding puzzles, with three hints per level, undo, and progress saved on this device.">
+  <title>Stabi Escape — Playtest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="masthead">
+      <a class="game-brand" href="./" aria-label="Back to home"><p class="eyebrow">← HOME</p><h1>STABI <span>ESCAPE</span></h1></a>
+      <button id="levels-button" class="icon-button" aria-label="Levels and score" title="Levels and score"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+    </header>
+    <section class="play-area" aria-label="Stabi Escape game">
+      <div class="level-line"><div><span class="eyebrow" id="level-number">LEVEL 01 / 15</span><h2 id="level-title">First steps</h2></div><span class="difficulty" id="difficulty">Warm-up</span></div>
+      <div class="stats"><div><span>MOVES</span><strong id="moves">0</strong></div><div class="star-stat"><span>3-STAR TARGET</span><strong id="target">2 moves</strong></div><div><span>BEST</span><strong id="best">—</strong></div></div>
+      <p class="instruction" id="instruction">Slide Slippage and MEV, then guide Stabi to the exit on the right.</p>
+      <div class="board-frame"><div id="board" class="board" role="group" aria-label="6 by 6 puzzle board"></div><div class="exit" aria-hidden="true"><span>EXIT</span><svg viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></div></div>
+      <div class="actions"><button id="undo" class="secondary" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5 3 10l5 5M3 10h10a7 7 0 0 1 7 7"/></svg>Undo</button><button id="restart" class="secondary"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10a9 9 0 1 1 0 5M3 4v6h6"/></svg>Restart</button><button id="sound-toggle" class="secondary" aria-label="Mute sound" aria-pressed="true" data-muted="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5 5 9H2v6h3l5 4l0-14z"/><path class="sound-waves" d="M14 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="sound-slash" d="m15 9 6 6m0-6-6 6"/></svg><span id="sound-label">Sound</span></button><button id="hint-button" class="secondary" type="button" aria-expanded="false" aria-controls="hint-panel"><span aria-hidden="true">?</span><span id="hint-label">Hint · 3/3</span></button></div>
+      <section id="hint-panel" class="hint-panel" aria-labelledby="hint-title" hidden><div class="hint-heading"><strong id="hint-title">Hint</strong><button id="close-hint" class="icon-button" type="button" aria-label="Close hint">×</button></div><p id="hint-text" role="status" aria-live="polite"></p><p class="hint-caption">3 hints per level. Hints do not reduce stars.</p></section>
+      <div class="tap-controls" aria-label="Alternative controls"><p id="selection-label">You can also select a block and use the arrows.</p><div><button id="move-back" class="arrow-button" aria-label="Move block left" disabled>←</button><button id="move-forward" class="arrow-button" aria-label="Move block right" disabled>→</button></div></div>
+      <p id="notice" class="notice" role="status" aria-live="polite"></p>
+    </section>
+    <footer><span>FAN-MADE · UNOFFICIAL</span><span>Progress saved on this device</span></footer>
+  </main>
+  <div id="level-modal" class="modal" hidden><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="choose-title"><div class="dialog-top"><h2 id="choose-title">Levels &amp; score</h2><button class="icon-button" id="close-levels" aria-label="Close">✕</button></div><p>Start easy. Take on the next challenge.</p><div class="progress-totals compact"><strong id="level-total-stars">0 / 45 ★</strong><span id="level-completed">0 / 15 levels cleared</span></div><div id="level-grid" class="level-grid"></div><button id="level-score" class="secondary wide">Summary &amp; scorecard</button></section></div>
+  <div id="win-modal" class="modal" hidden><section class="dialog victory" role="dialog" aria-modal="true" aria-labelledby="win-title"><span class="eyebrow">PATH CLEAR</span><div class="victory-scene" aria-hidden="true"><span class="winner-aura"></span><span class="sparkle spark-1">✦</span><span class="sparkle spark-2">✦</span><span class="sparkle spark-3">✦</span><span class="sparkle spark-4">✦</span><div class="victory-portrait"><img class="winner-stabi" src="assets/block-stabi.png" alt="" draggable="false"></div></div><h2 id="win-title">Stabi made it!</h2><div id="win-stars" class="win-stars" aria-label="3 stars">★★★</div><p id="win-summary"></p><div class="progress-totals"><div><span>Total stars</span><strong id="win-total-stars">0 / 45 ★</strong></div><div><span>Levels cleared</span><strong id="win-completed">0 / 15</strong></div></div><button id="next-level" class="primary">Next level <span>→</span></button><button id="win-score" class="secondary wide">Summary &amp; scorecard</button><button id="replay" class="text-button">Play again</button><button id="win-levels" class="text-button">Choose level</button></section></div>
+  <div id="score-modal" class="modal" hidden>
+    <section class="dialog score-dialog" role="dialog" aria-modal="true" aria-labelledby="score-title">
+      <div class="dialog-top"><h2 id="score-title">Stabi Escape score</h2><button id="close-score" class="icon-button" aria-label="Back">✕</button></div>
+      <p id="score-intro">Your personal best from every level.</p>
+      <div class="progress-totals"><div><span>Total stars</span><strong id="score-total-stars">0 / 45 ★</strong></div><div><span>Levels cleared</span><strong id="score-completed">0 / 15</strong></div></div>
+      <div id="score-card-frame" class="score-card-frame" aria-busy="false"><img id="score-preview" alt="Stabi Escape scorecard" hidden><p id="score-card-status" role="status">Clear one level to create your scorecard.</p></div>
+      <div id="score-actions" hidden>
+        <a id="download-score" class="primary" download hidden>Download PNG <span aria-hidden="true">↓</span></a>
+        <button id="share-image" class="secondary wide" hidden>Share image</button>
+        <a id="share-x" class="secondary wide" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">Share on X <span aria-hidden="true">↗</span></a>
+        <p class="share-hint">For X, download the PNG and attach it to your post.</p>
+      </div>
+      <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+  <script src="levels.js"></script>
+  <script src="engine.js"></script>
+  <script src="progress.js"></script>
+  <script src="sound.js"></script>
+  <script src="results.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
